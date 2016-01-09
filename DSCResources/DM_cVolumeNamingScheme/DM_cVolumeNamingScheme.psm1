@@ -3,7 +3,7 @@
 cDM_cVolumeNamingScheme.psm1
 
 AUTHOR:         David Baumbach
-Version:        1.0.1
+Version:        1.0.2
 Creation Date:  17/10/2015
 Last Modified:  09/01/2016
 
@@ -16,6 +16,7 @@ Change Log:
     0.0.1   17/10/2015  Initial Creation
     1.0.0   01/01/2016  First Published
     1.0.1   09/01/2016  Cleaned up the parameters of all functions.
+    1.0.2   09/01/2016  Corrected an invalid property in the hash table returned by Get-TargetResource (CurrentVolumeNamingScheme instead of VolumeNamingScheme).
 
 
 The code used to build the module.
@@ -119,7 +120,7 @@ Function ValidateProperties {
                 $ReturnData = @{
                     VolumesWithNamingScheme = $List_VolumesWithNamingScheme.Count
                     VolumesWithoutNamingScheme = $List_VolumesWithoutNamingScheme.Count
-                    CurrentVolumeNamingScheme = 'Default'
+                    VolumeNamingScheme = 'Default'
                 }
                 Return $ReturnData
             }
@@ -139,7 +140,7 @@ Function ValidateProperties {
                 $ReturnData = @{
                     VolumesWithNamingScheme = $List_VolumesWithNamingScheme.Count
                     VolumesWithoutNamingScheme = $List_VolumesWithoutNamingScheme.Count
-                    CurrentVolumeNamingScheme = $CurrentVolumeNamingScheme
+                    VolumeNamingScheme = $CurrentVolumeNamingScheme
                 }
                 Return $ReturnData
             }

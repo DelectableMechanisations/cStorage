@@ -8,7 +8,7 @@ Creation Date:  17/10/2015
 Last Modified:  09/01/2016
 
 
-This DSC module is used to apply a Standard naming scheme to all volumes on a computer.
+This DSC resource is used to apply a Standard naming scheme to all volumes on a computer.
 This naming scheme is %COMPUTERNAME%-%DRIVELETTER%-%EXISTING VOLUME LABEL% and will only apply to volumes that don't match this naming scheme.
 
 

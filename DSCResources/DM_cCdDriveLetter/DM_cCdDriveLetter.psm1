@@ -8,7 +8,7 @@ Creation Date:  31/07/2015
 Last Modified:  09/01/2016
 
 
-This DSC module is used to find any CD Drives on a computer and modify their Drive Letters so they use the last available (unused) drive letter.
+This DSC resource is used to find any CD Drives on a computer and modify their Drive Letters so they use the last available (unused) drive letter.
 e.g     A computer with 1 x CD Drive will have it re-mapped to Z:
         A computer with 2 x CD Drives will have them re-mapped to Y: and Z:
 

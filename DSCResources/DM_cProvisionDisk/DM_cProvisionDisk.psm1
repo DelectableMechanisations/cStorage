@@ -3,9 +3,9 @@
 DM_cProvisionDisk.psm1
 
 AUTHOR:         David Baumbach
-Version:        1.0.0
+Version:        1.0.1
 Creation Date:  17/10/2015
-Last Modified:  01/01/2016
+Last Modified:  09/01/2016
 
 
 This DSC module is a more automated way of provisioning disks on a server than the xDisk/xStorage DSC module created by Microsoft.
@@ -15,6 +15,7 @@ It will search the system for any offline disks and if it finds any it will brin
 Change Log:
     0.0.1   17/10/2015  Initial Creation
     1.0.0   01/01/2016  First Published
+    1.0.1   09/01/2016  Corrected an invalid property in the hash table returned by Get-TargetResource (CurrentDiskConfiguration instead of DiskConfiguration).
 
 
 The code used to build the module.
@@ -33,19 +34,24 @@ The code used to build the module.
 
 #The Get-TargetResource function wrapper.
 Function Get-TargetResource {
-	[CmdletBinding()]
-	[OutputType([System.Collections.Hashtable])]
+    [CmdletBinding()]
+    [OutputType([System.Collections.Hashtable])]
     Param (
         [Parameter(Mandatory = $true)]
         [ValidateSet('AllOnline','Default')]
-        [System.String]$DiskConfiguration,
+        [System.String]
+        $DiskConfiguration,
 
+        [Parameter(Mandatory = $false)]
         [ValidateSet('NTFS', 'ReFS', 'exFAT', 'FAT32', 'FAT')]
-        [System.String]$FileSystem,
+        [System.String]
+        $FileSystem,
 
+        [Parameter(Mandatory = $false)]
         [ValidateScript({@(4096, 8192, 16384, 32768, 65536) -contains $_})]
-        [System.UInt32]$BlockSize
-	)
+        [System.UInt32]
+        $BlockSize
+    )
 
     ValidateProperties @PSBoundParameters -Mode Get
 }
@@ -55,18 +61,23 @@ Function Get-TargetResource {
 
 #The Set-TargetResource function wrapper.
 Function Set-TargetResource {
-	[CmdletBinding()]
+    [CmdletBinding()]
     Param (
         [Parameter(Mandatory = $true)]
         [ValidateSet('AllOnline','Default')]
-        [System.String]$DiskConfiguration,
-        
-        [ValidateSet('NTFS', 'ReFS', 'exFAT', 'FAT32', 'FAT')]
-        [System.String]$FileSystem,
+        [System.String]
+        $DiskConfiguration,
 
+        [Parameter(Mandatory = $false)]
+        [ValidateSet('NTFS', 'ReFS', 'exFAT', 'FAT32', 'FAT')]
+        [System.String]
+        $FileSystem,
+
+        [Parameter(Mandatory = $false)]
         [ValidateScript({@(4096, 8192, 16384, 32768, 65536) -contains $_})]
-        [System.UInt32]$BlockSize
-	)
+        [System.UInt32]
+        $BlockSize
+    )
 
     ValidateProperties @PSBoundParameters -Mode Set
 }
@@ -76,19 +87,24 @@ Function Set-TargetResource {
 
 #The Test-TargetResource function wrapper.
 Function Test-TargetResource {
-	[CmdletBinding()]
-	[OutputType([System.Boolean])]
-	Param (
+    [CmdletBinding()]
+    [OutputType([System.Boolean])]
+    Param (
         [Parameter(Mandatory = $true)]
         [ValidateSet('AllOnline','Default')]
-        [System.String]$DiskConfiguration,
-        
-        [ValidateSet('NTFS', 'ReFS', 'exFAT', 'FAT32', 'FAT')]
-        [System.String]$FileSystem,
+        [System.String]
+        $DiskConfiguration,
 
+        [Parameter(Mandatory = $false)]
+        [ValidateSet('NTFS', 'ReFS', 'exFAT', 'FAT32', 'FAT')]
+        [System.String]
+        $FileSystem,
+
+        [Parameter(Mandatory = $false)]
         [ValidateScript({@(4096, 8192, 16384, 32768, 65536) -contains $_})]
-        [System.UInt32]$BlockSize
-	)
+        [System.UInt32]
+        $BlockSize
+    )
 
     ValidateProperties @PSBoundParameters -Mode Test
 }
@@ -98,22 +114,28 @@ Function Test-TargetResource {
 
 #This function has all the smarts in it and is used to do all of the configuring.
 Function ValidateProperties {
-
     [CmdletBinding()]
-	Param (
+    Param (
+        [Parameter(Mandatory = $true)]
         [ValidateSet('AllOnline','Default')]
-        [System.String]$DiskConfiguration,
-        
-        [ValidateSet('NTFS', 'ReFS', 'exFAT', 'FAT32', 'FAT')]
-        [System.String]$FileSystem,
+        [System.String]
+        $DiskConfiguration,
 
+        [Parameter(Mandatory = $false)]
+        [ValidateSet('NTFS', 'ReFS', 'exFAT', 'FAT32', 'FAT')]
+        [System.String]
+        $FileSystem,
+
+        [Parameter(Mandatory = $false)]
         [ValidateScript({@(4096, 8192, 16384, 32768, 65536) -contains $_})]
-        [System.UInt32]$BlockSize,
+        [System.UInt32]
+        $BlockSize,
 
         [Parameter(Mandatory = $true)]
-		[ValidateSet('Get','Set','Test')]
-		[System.String]$Mode = 'Get'
-	)
+        [ValidateSet('Get','Set','Test')]
+        [System.String]
+        $Mode = 'Get'
+    )
     
 
     #Get a list of all disks on the computer and divide them into separate variables for offline and online disks.
@@ -139,7 +161,7 @@ Function ValidateProperties {
                 $ReturnData = @{
                     DisksOffline = $List_OfflineDisks.Count
                     DisksOnline = $List_OnlineDisks.Count
-                    CurrentDiskConfiguration = 'Default'
+                    DiskConfiguration = 'Default'
                 }
                 Return $ReturnData
             }
@@ -159,7 +181,7 @@ Function ValidateProperties {
                 $ReturnData = @{
                     DisksOffline = $List_OfflineDisks.Count
                     DisksOnline = $List_OnlineDisks.Count
-                    CurrentDiskConfiguration = $CurrentDiskConfiguration
+                    DiskConfiguration = $CurrentDiskConfiguration
                 }
                 Return $ReturnData
             }

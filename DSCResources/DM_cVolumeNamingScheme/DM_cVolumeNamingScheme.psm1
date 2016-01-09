@@ -3,9 +3,9 @@
 cDM_cVolumeNamingScheme.psm1
 
 AUTHOR:         David Baumbach
-Version:        1.0.0
+Version:        1.0.1
 Creation Date:  17/10/2015
-Last Modified:  01/01/2016
+Last Modified:  09/01/2016
 
 
 This DSC module is used to apply a Standard naming scheme to all volumes on a computer.
@@ -15,6 +15,7 @@ This naming scheme is %COMPUTERNAME%-%DRIVELETTER%-%EXISTING VOLUME LABEL% and w
 Change Log:
     0.0.1   17/10/2015  Initial Creation
     1.0.0   01/01/2016  First Published
+    1.0.1   09/01/2016  Cleaned up the parameters of all functions.
 
 
 The code used to build the module.
@@ -31,13 +32,14 @@ The code used to build the module.
 
 #The Get-TargetResource function wrapper.
 Function Get-TargetResource {
-	[CmdletBinding()]
-	[OutputType([System.Collections.Hashtable])]
+    [CmdletBinding()]
+    [OutputType([System.Collections.Hashtable])]
     Param (
         [Parameter(Mandatory = $true)]
         [ValidateSet('ComputerNameDriveLetterVolumeLabel','Default')]
-        [System.String]$VolumeNamingScheme = 'Default'
-	)
+        [System.String]
+        $VolumeNamingScheme = 'Default'
+    )
 
     ValidateProperties @PSBoundParameters -Mode Get
 }
@@ -47,12 +49,14 @@ Function Get-TargetResource {
 
 #The Set-TargetResource function wrapper.
 Function Set-TargetResource {
-	[CmdletBinding()]
+    [CmdletBinding()]
+    [OutputType([System.Collections.Hashtable])]
     Param (
         [Parameter(Mandatory = $true)]
         [ValidateSet('ComputerNameDriveLetterVolumeLabel','Default')]
-        [System.String]$VolumeNamingScheme = 'Default'
-	)
+        [System.String]
+        $VolumeNamingScheme = 'Default'
+    )
 
     ValidateProperties @PSBoundParameters -Mode Set
 }
@@ -62,13 +66,14 @@ Function Set-TargetResource {
 
 #The Test-TargetResource function wrapper.
 Function Test-TargetResource {
-	[CmdletBinding()]
-	[OutputType([System.Boolean])]
-	Param (
+    [CmdletBinding()]
+    [OutputType([System.Collections.Hashtable])]
+    Param (
         [Parameter(Mandatory = $true)]
         [ValidateSet('ComputerNameDriveLetterVolumeLabel','Default')]
-        [System.String]$VolumeNamingScheme = 'Default'
-	)
+        [System.String]
+        $VolumeNamingScheme = 'Default'
+    )
 
     ValidateProperties @PSBoundParameters -Mode Test
 }
@@ -78,16 +83,17 @@ Function Test-TargetResource {
 
 #This function has all the smarts in it and is used to do all of the configuring.
 Function ValidateProperties {
-
     [CmdletBinding()]
-	Param (
+    Param (
         [ValidateSet('ComputerNameDriveLetterVolumeLabel','Default')]
-        [System.String]$VolumeNamingScheme = 'Default',
+        [System.String]
+        $VolumeNamingScheme = 'Default',
 
         [Parameter(Mandatory = $true)]
-		[ValidateSet('Get','Set','Test')]
-		[System.String]$Mode = 'Get'
-	)
+        [ValidateSet('Get','Set','Test')]
+        [System.String]
+        $Mode = 'Get'
+    )
     
 
     #Get a list of all volumes on the system that don't have a naming scheme.

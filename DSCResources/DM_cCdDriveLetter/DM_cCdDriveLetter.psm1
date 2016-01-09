@@ -3,9 +3,9 @@
 DM_cCdDriveLetter.psm1
 
 AUTHOR:         David Baumbach
-Version:        1.0.1
+Version:        1.0.2
 Creation Date:  31/07/2015
-Last Modified:  08/01/2016
+Last Modified:  09/01/2016
 
 
 This DSC module is used to find any CD Drives on a computer and modify their Drive Letters so they use the last available (unused) drive letter.
@@ -16,7 +16,8 @@ e.g     A computer with 1 x CD Drive will have it re-mapped to Z:
 Change Log:
     0.0.1   31/07/2015  Initial Creation
     1.0.0   01/01/2016  First Published
-    1.0.1   08/01/2016  Corrected an invalid property in the hash table returned by Get-TargetResource ($CurrentCdRomDriveLetterAllocation instead of $CdRomDriveLetterAllocation).
+    1.0.1   08/01/2016  Corrected an invalid property in the hash table returned by Get-TargetResource (CurrentCdRomDriveLetterAllocation instead of CdRomDriveLetterAllocation).
+    1.0.2   09/01/2016  Fixed the bug introduced by the change above.
 
 
 The code used to build the module.
@@ -32,13 +33,14 @@ The code used to build the module.
 
 #The Get-TargetResource function wrapper.
 Function Get-TargetResource {
-	[CmdletBinding()]
-	[OutputType([System.Collections.Hashtable])]
+    [CmdletBinding()]
+    [OutputType([System.Collections.Hashtable])]
     Param (
         [Parameter(Mandatory = $true)]
         [ValidateSet('UseLastAvailable','Default')]
-        [System.String]$CdRomDriveLetterAllocation = 'Default'
-	)
+        [System.String]
+        $CdRomDriveLetterAllocation = 'Default'
+    )
 
     ValidateProperties @PSBoundParameters -Mode Get
 }
@@ -48,12 +50,13 @@ Function Get-TargetResource {
 
 #The Set-TargetResource function wrapper.
 Function Set-TargetResource {
-	[CmdletBinding()]
+    [CmdletBinding()]
     Param (
         [Parameter(Mandatory = $true)]
         [ValidateSet('UseLastAvailable','Default')]
-        [System.String]$CdRomDriveLetterAllocation = 'Default'
-	)
+        [System.String]
+        $CdRomDriveLetterAllocation = 'Default'
+    )
 
     ValidateProperties @PSBoundParameters -Mode Set
 }
@@ -63,13 +66,14 @@ Function Set-TargetResource {
 
 #The Test-TargetResource function wrapper.
 Function Test-TargetResource {
-	[CmdletBinding()]
-	[OutputType([System.Boolean])]
-	Param (
+    [CmdletBinding()]
+    [OutputType([System.Boolean])]
+    Param (
         [Parameter(Mandatory = $true)]
         [ValidateSet('UseLastAvailable','Default')]
-        [System.String]$CdRomDriveLetterAllocation = 'Default'
-	)
+        [System.String]
+        $CdRomDriveLetterAllocation = 'Default'
+    )
 
     ValidateProperties @PSBoundParameters -Mode Test
 }
@@ -79,19 +83,20 @@ Function Test-TargetResource {
 
 #This function has all the smarts in it and is used to do all of the configuring.
 Function ValidateProperties {
-
     [CmdletBinding()]
-	Param (
+    Param (
         [ValidateSet('UseLastAvailable','Default')]
-        [System.String]$CdRomDriveLetterAllocation = 'Default',
+        [System.String]
+        $CdRomDriveLetterAllocation = 'Default',
 
         [Parameter(Mandatory = $true)]
-		[ValidateSet('Get','Set','Test')]
-		[System.String]$Mode = 'Get'
-	)
+        [ValidateSet('Get','Set','Test')]
+        [System.String]
+        $Mode = 'Get'
+    )
     
     $CdRomAllocatedDriveLetters = ''
-    $CdRomDriveLetterAllocation = 'UseLastAvailable'
+    $CurrentCdRomDriveLetterAllocation = 'UseLastAvailable'
 
     #Get a list of all CD ROM drives on the computer.
     [Array]$List_CdDrives = Get-CimInstance -Query "SELECT * FROM Win32_Volume WHERE DriveType=5"
@@ -121,7 +126,7 @@ Function ValidateProperties {
                             Set-CimInstance -InputObject $CdDrive -Property @{DriveLetter = ($LastFreeDriveLetter + ':')}
                         }
 
-                        'Test' {$CdRomDriveLetterAllocation = 'Default'}
+                        'Test' {$CurrentCdRomDriveLetterAllocation = 'Default'}
                     }
 
 
@@ -165,17 +170,17 @@ Function ValidateProperties {
                 'Get'  {
                     $ReturnData = @{
                         CdRomAllocatedDriveLetters = $CdRomAllocatedDriveLetters.TrimEnd()
-                        CdRomDriveLetterAllocation = $CdRomDriveLetterAllocation
+                        CdRomDriveLetterAllocation = $CurrentCdRomDriveLetterAllocation
                     }
                     Return $ReturnData
                 }
 
                 'Set'  {<##>Write-Verbose -Message "Command processing is complete and changes have been made where applicable."}
                 'Test' {
-                    if ($CdRomDriveLetterAllocation -eq 'Default') {
+                    if ($CurrentCdRomDriveLetterAllocation -eq 'Default') {
                         Return $false
 
-                    } elseif ($CdRomDriveLetterAllocation -eq 'UseLastAvailable') {
+                    } elseif ($CurrentCdRomDriveLetterAllocation -eq 'UseLastAvailable') {
                         Return $true
                     }
                 }

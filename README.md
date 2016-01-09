@@ -2,6 +2,7 @@
 DSC Module containing resources used to configure Storage on a Windows Computer
 
 This is my own take on Microsoft's xDisk/xStorage module and contains the following resources:
+
 cCdDriveLetter - This DSC module is used to find any CD Drives on a computer and modify their Drive Letters so they use the last available (unused) drive letter.
 e.g     A computer with 1 x CD Drive will have it re-mapped to Z:
         A computer with 2 x CD Drives will have them re-mapped to Y: and Z:

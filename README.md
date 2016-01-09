@@ -1,5 +1,5 @@
 # cStorage
-DSC Module containing resources used to configure Storage on a Windows Computer
+DSC Module containing resources used to configure Storage on a Windows Computer.
 
 This is my own take on Microsoft's xDisk/xStorage module and contains the following resources:
 

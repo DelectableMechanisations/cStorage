@@ -3,12 +3,12 @@
 cDM_cVolumeNamingScheme.psm1
 
 AUTHOR:         David Baumbach
-Version:        1.0.2
+Version:        1.0.3
 Creation Date:  17/10/2015
-Last Modified:  09/01/2016
+Last Modified:  06/01/2017
 
 
-This DSC resource is used to apply a Standard naming scheme to all volumes on a computer.
+This DSC module is used to apply a Standard naming scheme to all volumes on a computer.
 This naming scheme is %COMPUTERNAME%-%DRIVELETTER%-%EXISTING VOLUME LABEL% and will only apply to volumes that don't match this naming scheme.
 
 
@@ -16,7 +16,8 @@ Change Log:
     0.0.1   17/10/2015  Initial Creation
     1.0.0   01/01/2016  First Published
     1.0.1   09/01/2016  Cleaned up the parameters of all functions.
-    1.0.2   09/01/2016  Corrected an invalid property in the hash table returned by Get-TargetResource (CurrentVolumeNamingScheme instead of VolumeNamingScheme).
+    1.0.2   09/06/2016  Corrected an invalid property returned by the Get-TargetResource function.
+    1.0.3   06/01/2017  Fixed a bug where the naming policy was not applying to the C: drive.
 
 
 The code used to build the module.
@@ -98,7 +99,7 @@ Function ValidateProperties {
     
 
     #Get a list of all volumes on the system that don't have a naming scheme.
-    [Array]$List_Volumes = Get-Partition | Where-Object {$_.IsSystem -eq $false} | Get-Volume
+    [Array]$List_Volumes = Get-Partition | Where-Object {$_.IsHidden -eq $false} | Get-Volume
     [Array]$List_VolumesWithoutNamingScheme = $List_Volumes | Where-Object {$_.FileSystemLabel -notlike ($env:COMPUTERNAME + '-' + $_.DriveLetter + '-*')}
     [Array]$List_VolumesWithNamingScheme = $List_Volumes | Where-Object {$_.FileSystemLabel -like ($env:COMPUTERNAME + '-' + $_.DriveLetter + '-*')}
 

@@ -8,7 +8,7 @@ Creation Date:  17/10/2015
 Last Modified:  09/01/2016
 
 
-This DSC resource is a more automated way of provisioning disks on a server than the xDisk/xStorage DSC module created by Microsoft.
+This DSC module is a more automated way of provisioning disks on a server than the xDisk/xStorage DSC module created by Microsoft.
 It will search the system for any offline disks and if it finds any it will bring them online, format them and assign them drive letters.
 
 
